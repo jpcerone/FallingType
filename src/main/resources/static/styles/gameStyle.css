@@ -35,7 +35,6 @@ body {
   color: white;
   position: absolute;
   z-index: 2;
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -65,57 +64,19 @@ h1 {
   background-color: #1d7873;
 }
 
-/* Table styles */
-.table {
-    width: 100%;
-    margin: 20px 0;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+a {
+    display: inline-block;
+    font-size: 18px;
+    color: #4CAF50;
+    text-decoration: none;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.table th,
-.table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.table th {
+a:hover {
     background-color: #4CAF50;
     color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.table tr:hover {
-    background-color: #e1f7e1;
-    cursor: pointer;
-}
-
-.table td {
-    font-size: 16px;
-}
-
-/* Header styling */
-.table thead {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .table {
-        font-size: 14px;
-    }
-
-    .table th, .table td {
-        padding: 8px;
-    }
 }
