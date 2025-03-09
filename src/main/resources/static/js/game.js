@@ -9,7 +9,7 @@ var textFontFamily = "'Courier New', monospace";
 var audioElementMusic = document.createElement('audio');
 audioElementMusic.setAttribute('src','sound/music2.mp3');
 audioElementMusic.loop = true;
-audioElementMusic.playbackRate = 1.0629; //get to 140 bpm
+audioElementMusic.playbackRate = 1.0629; //get to 143.5 bpm
 
 
 var testText = "Failure is not the end; it's a detour on the road to success. Everyone stumbles and falls along the way, but what truly matters is how you respond. Instead of letting setbacks discourage you, view them as valuable learning experiences. Analyze what went wrong, extract the lessons, adjust your approach, and keep moving forward with renewed determination. Remember, every successful person has encountered failure at some point. It's through these challenges that we grow stronger, wiser, and more resilient.";
@@ -70,7 +70,7 @@ groupUserBox.position.set(userBoxX,userBoxY);
 var currentLetter = groupText.children[0].value;
 var currentIndex = 0;
 var pressedKey = "";
-var health = 2000;
+var health = 25;
 var score = 0;
 
 var gameSpeedModifier = 1;//match bpm
@@ -99,7 +99,6 @@ function update(frameCount) {
             audioElementMusic.playbackRate = oldPlaybackRate + 0.3;
         }
 
-        //reset userBox if enlarged by space
         userBox.scale = 1;
 
         var curLetterObj = groupText.children[currentIndex];
@@ -109,9 +108,6 @@ function update(frameCount) {
         if(Math.abs(curLetterX - userBoxX) < 12){
             isOnBox = true;
             curLetterObj.scale = 2;
-            if(currentLetter == " "){
-                userBox.scale = 1.3;
-            }
         }
 
         if(currentLetter == pressedKey && isOnBox){
