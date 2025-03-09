@@ -2,11 +2,10 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Leaderboard</title>
+    <link th:href="@{/styles/gameStyle.css}" rel="stylesheet" />
 </head>
 <body>
-<p>Your score:</p>
-<p th:text="${newHighScore}"></p>
 <table class="table">
     <thead>
     <tr>
@@ -19,11 +18,10 @@
     <tr th:each="highscore : ${highScores}">
         <td th:text="${highscore.userName}"></td>
         <td th:text="${highscore.score}"></td>
-        <td th:text="${highscore.timeStamp}"></td>
+        <td th:text="${{highscore.timeStamp}}"></td>
     </tr>
     </tbody>
 </table>
-
 
 </body>
 </html>

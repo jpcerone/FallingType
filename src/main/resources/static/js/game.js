@@ -72,10 +72,11 @@ var currentIndex = 0;
 var pressedKey = "";
 var health = 25;
 var score = 0;
+newGame();
 
 var gameSpeedModifier = 1;//match bpm
 
-var levelArray = [1500,3000,6000,10000,20000,30000];
+var levelArray = [1500,3000,4500,6000,7500,9000];
 var levelAdjust = 0;
 
 var hits = 0;
@@ -115,6 +116,7 @@ function update(frameCount) {
             score++;
             var accuracyVal = Math.round(Math.abs(curLetterX - userBoxX));
             score += (10-accuracyVal);
+            phoneHome();
             if (accuracyVal < 3){
                 scoreText.stroke = '#71eb34';
                 userBox.scale = 1.3;
@@ -137,6 +139,8 @@ function update(frameCount) {
         groupText.position.set(cx-moddedGameSpeed,cy);
     }else{
         audioElementMusic.pause();
+        two.pause();
+        document.getElementById("highScoreSubmit").style.display = 'block';
     }
 }
 
@@ -173,6 +177,22 @@ function startGame(){
     startTime = new Date().getTime();
     two.play();
 }
+
+function phoneHome(){
+    $.ajax({
+        type: "POST",
+        url: "gameHealthCheck",
+        data: {"score":score}
+    });
+}
+
+function newGame(){
+    $.ajax({
+        type: "POST",
+        url: "newGame"
+    });
+}
+
 document.addEventListener('keydown', function(event) {
   var key = event.key;
   if(key == " "){
