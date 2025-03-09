@@ -3,12 +3,19 @@
 
 <head>
   <title>Falling Type</title>
+  <link th:href="@{/styles/gameStyle.css}" rel="stylesheet" />
 </head>
 
-<body>
-<div id="mainDiv">
-  <canvas id="two-canvas"></canvas>
-</div>
+
+
+<body class="disabled">
+  <div id="mainDiv">
+    <canvas id="two-canvas"></canvas>
+  </div>
+
+  <div id="startScreenPopup">
+    <button onclick="startGame()">Play</button>
+  </div>
 </body>
 
 <script th:src="@{/js/two.min.js}"></script>

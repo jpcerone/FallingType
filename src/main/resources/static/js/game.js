@@ -4,6 +4,8 @@ var params = {
 var elem = document.body;
 var two = new Two(params).appendTo(elem);
 
+var textFontFamily = "Courier New";
+
 var audioElementMusic = document.createElement('audio');
 audioElementMusic.setAttribute('src','sound/music.mp3');
 audioElementMusic.setAttribute('autoplay','autoplay');
@@ -17,10 +19,11 @@ var groupUserBox = two.makeGroup();
 var xDelta = 0;
 testText.split('').forEach(char => {
   var charObj = two.makeText(char);
+  charObj.family = textFontFamily;
   charObj.scale = 1.5;
   charObj.position = new Two.Vector(xDelta,0);
   charObj.addTo(groupText);
-  xDelta += 13;
+  xDelta += 25;
 });
 
 var userBox = two.makeRectangle(0,0,30,80);
@@ -40,6 +43,11 @@ healthText.scale = 2;
 healthText.position = new Two.Vector(0,-250);
 healthText.addTo(groupUserBox);
 
+var levelText = two.makeText("Level 0");
+levelText.scale = 2;
+levelText.position = new Two.Vector(500,-250);
+levelText.addTo(groupUserBox);
+
 
 var cx = two.width*0.40;
 var cy = two.height * 0.3;
@@ -57,25 +65,34 @@ groupUserBox.position.set(userBoxX,userBoxY);
 var currentLetter = groupText.children[0].value;
 var currentIndex = 0;
 var pressedKey = "";
-var health = 5;
+var health = 20;
 var score = 0;
 
+var gameSpeedModifier = 0.7;
+
+var levelArray = [1000,2500,3500];
+var levelAdjust = 0;
 
 two.bind('update', update);
 // Finally, start the animation loop
-two.play();
 
-var gameSpeedModifier = 0.40;
+
+
 
 function update(frameCount) {
     if(health > 0){
-        var moddedGameSpeed = frameCount * gameSpeedModifier;
+        var moddedGameSpeed = (frameCount * gameSpeedModifier)+levelAdjust;
 
-//        if(currentIndex % 25 == 0){
-//            gameSpeedModifier =+ gameSpeedModifier * .05;
-//            audioElementMusic.playbackRate = 1 + (currentIndex* .01);
-//        }
+        if(levelArray.includes(frameCount)){
+            //level modifiers
+            var oldPlaybackRate = audioElementMusic.playbackRate;
+            gameSpeedModifier = gameSpeedModifier + 0.2;
+            audioElementMusic.playbackRate = oldPlaybackRate * 1.2;
+            levelText.value = "Level "+(levelArray.indexOf(frameCount) + 1);
+            levelAdjust = moddedGameSpeed - (frameCount * gameSpeedModifier);
+        }
 
+        //reset userBox if enlarged by space
         userBox.scale = 1;
 
         var curLetterObj = groupText.children[currentIndex];
@@ -96,7 +113,13 @@ function update(frameCount) {
             currentIndex++;
             pressedKey = "";
             score++;
-            score += Math.round(Math.abs(curLetterX - userBoxX));
+            var accuracyVal = Math.round(Math.abs(curLetterX - userBoxX));
+            score += (10-accuracyVal);
+            if (accuracyVal < 3){
+                scoreText.stroke = '#71eb34';
+            }else{
+                scoreText.stroke = '#e8eb34';
+            }
         }
         else if(!isOnBox && curLetterX < userBoxX ){
             var nextChild = groupText.children[currentIndex+1];
@@ -105,15 +128,24 @@ function update(frameCount) {
             currentIndex++;
             pressedKey = "";
             health--;
+            scoreText.stroke = '#eb4634';
         }
         scoreText.value = "Score: " + score;
         healthText.value = "Health: " + health;
 
+        pressedKey = "";
 
         groupText.position.set(cx-moddedGameSpeed,cy);
     }else{
         audioElementMusic.pause();
     }
+}
+
+function startGame(){
+    document.body.className = document.body.className.replace("disabled","");
+    var startScreenPopup = document.getElementById("startScreenPopup");
+    startScreenPopup.style.display = 'none';
+    two.play();
 }
 document.addEventListener('keydown', function(event) {
   const key = event.key;
