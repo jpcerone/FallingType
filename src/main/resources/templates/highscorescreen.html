@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>Your score:</p>
+<p th:text="${newHighScore}"></p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Score</th>
+        <th>Time Stamp</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="highscore : ${highScores}">
+        <td th:text="${highscore.userName}"></td>
+        <td th:text="${highscore.score}"></td>
+        <td th:text="${highscore.timeStamp}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>
