@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fallingtype
-          path: '${{ github.workspace }}/build/libs/*.war'
+          path: '${{ github.workspace }}/build/libs/FallingType.war'
 
   deploy:
     runs-on: ubuntu-latest
