@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <link th:href="@{/styles/leaderBoard.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div>
+    <a href="FallingType"> Back to game </a>
+</div>
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Time Stamp</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="highscore : ${highScores}">
+            <td th:text="${highscore.userName}"></td>
+            <td th:text="${highscore.score}"></td>
+            <td th:text="${{highscore.timeStamp}}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

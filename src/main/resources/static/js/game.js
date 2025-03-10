@@ -4,11 +4,13 @@ var params = {
 var elem = document.body;
 var two = new Two(params).appendTo(elem);
 
+var textFontFamily = "'Courier New', monospace";
+
 var audioElementMusic = document.createElement('audio');
-audioElementMusic.setAttribute('src','sound/music.mp3');
-audioElementMusic.setAttribute('autoplay','autoplay');
+audioElementMusic.setAttribute('src','sound/music2.mp3');
 audioElementMusic.loop = true;
-audioElementMusic.play();
+audioElementMusic.playbackRate = 1.0629; //get to 143.5 bpm
+
 
 var testText = "Failure is not the end; it's a detour on the road to success. Everyone stumbles and falls along the way, but what truly matters is how you respond. Instead of letting setbacks discourage you, view them as valuable learning experiences. Analyze what went wrong, extract the lessons, adjust your approach, and keep moving forward with renewed determination. Remember, every successful person has encountered failure at some point. It's through these challenges that we grow stronger, wiser, and more resilient.";
 
@@ -16,11 +18,17 @@ var groupText = two.makeGroup();
 var groupUserBox = two.makeGroup();
 var xDelta = 0;
 testText.split('').forEach(char => {
+  if(char == " "){
+    char = "_";
+  }
   var charObj = two.makeText(char);
-  charObj.scale = 1.5;
+  charObj.family = textFontFamily;
+  charObj.size = 20;
   charObj.position = new Two.Vector(xDelta,0);
   charObj.addTo(groupText);
-  xDelta += 13;
+  var boundingRect = charObj.getBoundingClientRect();
+
+  xDelta += 50;
 });
 
 var userBox = two.makeRectangle(0,0,30,80);
@@ -40,6 +48,11 @@ healthText.scale = 2;
 healthText.position = new Two.Vector(0,-250);
 healthText.addTo(groupUserBox);
 
+var levelText = two.makeText("Level 0");
+levelText.scale = 2;
+levelText.position = new Two.Vector(500,-250);
+levelText.addTo(groupUserBox);
+
 
 var cx = two.width*0.40;
 var cy = two.height * 0.3;
@@ -57,65 +70,133 @@ groupUserBox.position.set(userBoxX,userBoxY);
 var currentLetter = groupText.children[0].value;
 var currentIndex = 0;
 var pressedKey = "";
-var health = 5;
+var health = 25;
 var score = 0;
+newGame();
+
+var gameSpeedModifier = 1;//match bpm
+
+var levelArray = [1500,3000,4500,6000,7500,9000];
+var levelAdjust = 0;
+
+var hits = 0;
+
+var startTime;
 
 
 two.bind('update', update);
 // Finally, start the animation loop
-two.play();
-
-var gameSpeedModifier = 0.40;
 
 function update(frameCount) {
     if(health > 0){
-        var moddedGameSpeed = frameCount * gameSpeedModifier;
+        var moddedGameSpeed = (frameCount * gameSpeedModifier)+levelAdjust;
 
-//        if(currentIndex % 25 == 0){
-//            gameSpeedModifier =+ gameSpeedModifier * .05;
-//            audioElementMusic.playbackRate = 1 + (currentIndex* .01);
-//        }
+        if(levelArray.includes(frameCount)){
+            //level modifiers
+            var oldPlaybackRate = audioElementMusic.playbackRate;
+            gameSpeedModifier = gameSpeedModifier + 0.3;
+            levelText.value = "Level "+(levelArray.indexOf(frameCount) + 1);
+            levelAdjust = moddedGameSpeed - (frameCount * gameSpeedModifier);
+            audioElementMusic.playbackRate = oldPlaybackRate + 0.3;
+        }
 
         userBox.scale = 1;
 
         var curLetterObj = groupText.children[currentIndex];
 
-        var curLetterX = groupText.position.x + curLetterObj.position.x;
+        var curLetterX = Math.round(groupText.position.x + curLetterObj.position.x);
         var isOnBox = false;
-        if(Math.abs(curLetterX - userBoxX) < 10){
+        if(Math.abs(curLetterX - userBoxX) < 12){
             isOnBox = true;
             curLetterObj.scale = 2;
-            if(currentLetter == " "){
+        }
+
+        if(currentLetter == pressedKey && isOnBox){
+            removeCurrentLetter();
+            score++;
+            var accuracyVal = Math.round(Math.abs(curLetterX - userBoxX));
+            score += (10-accuracyVal);
+            phoneHome();
+            if (accuracyVal < 3){
+                scoreText.stroke = '#71eb34';
                 userBox.scale = 1.3;
+            }else{
+                scoreText.stroke = '#e8eb34';
+                userBox.scale = 1.1;
             }
         }
-        if(currentLetter == pressedKey && isOnBox){
-            var nextChild = groupText.children[currentIndex+1];
-            groupText.children[currentIndex].opacity = 0;
-            currentLetter = nextChild.value;
-            currentIndex++;
-            pressedKey = "";
-            score++;
-            score += Math.round(Math.abs(curLetterX - userBoxX));
-        }
         else if(!isOnBox && curLetterX < userBoxX ){
-            var nextChild = groupText.children[currentIndex+1];
-            groupText.children[currentIndex].opacity = 0;
-            currentLetter = nextChild.value;
-            currentIndex++;
+            removeCurrentLetter();
             pressedKey = "";
             health--;
+            scoreText.stroke = '#eb4634';
         }
         scoreText.value = "Score: " + score;
         healthText.value = "Health: " + health;
 
+        pressedKey = "";
 
         groupText.position.set(cx-moddedGameSpeed,cy);
     }else{
         audioElementMusic.pause();
+        two.pause();
+        document.getElementById("highScoreSubmit").style.display = 'block';
     }
 }
+
+function removeCurrentLetter(){
+    var nextChild = groupText.children[currentIndex+1];
+    groupText.children[currentIndex].opacity = 0;
+    currentLetter = nextChild.value;
+    currentIndex++;
+    pressedKey = "";
+
+    hits++;
+    var now = new Date().getTime();
+    var diff = (now - startTime)/1000;
+    if(diff >= 30 && diff <= 31){
+        console.log("hits in 30 seconds: " + hits);
+    }
+    if(diff >= 60 && diff <= 61){
+        console.log("hits in 60 seconds: " + hits);
+    }
+    if(diff >= 90 && diff <= 91){
+        console.log("hits in 90 seconds: " + hits);
+    }
+    if(diff >= 120 && diff <= 121){
+        console.log("hits in 120 seconds: " + hits);
+    }
+
+}
+
+function startGame(){
+    document.body.className = document.body.className.replace("disabled","");
+    var startScreenPopup = document.getElementById("startScreenPopup");
+    startScreenPopup.style.display = 'none';
+    audioElementMusic.play();
+    startTime = new Date().getTime();
+    two.play();
+}
+
+function phoneHome(){
+    $.ajax({
+        type: "POST",
+        url: "gameHealthCheck",
+        data: {"score":score}
+    });
+}
+
+function newGame(){
+    $.ajax({
+        type: "POST",
+        url: "newGame"
+    });
+}
+
 document.addEventListener('keydown', function(event) {
-  const key = event.key;
+  var key = event.key;
+  if(key == " "){
+    key = "_";
+  }
   pressedKey = key;
 });
