@@ -3,13 +3,14 @@ var params = {
 };
 var elem = document.body;
 var two = new Two(params).appendTo(elem);
+var FRAMERATE = 30 / 1000; // This is like 30fps
 
 var textFontFamily = "'Courier New', monospace";
 
 var audioElementMusic = document.createElement('audio');
 audioElementMusic.setAttribute('src','sound/music2.mp3');
 audioElementMusic.loop = true;
-audioElementMusic.playbackRate = 1.0629; //get to 143.5 bpm
+audioElementMusic.playbackRate = 1.11111111; //get to 143.5 bpm
 
 
 var testText = "Failure is not the end; it's a detour on the road to success. Everyone stumbles and falls along the way, but what truly matters is how you respond. Instead of letting setbacks discourage you, view them as valuable learning experiences. Analyze what went wrong, extract the lessons, adjust your approach, and keep moving forward with renewed determination. Remember, every successful person has encountered failure at some point. It's through these challenges that we grow stronger, wiser, and more resilient.";
@@ -83,9 +84,10 @@ var hits = 0;
 
 var startTime;
 
+var gameIntervalId = 0;
+
 
 two.bind('update', update);
-// Finally, start the animation loop
 
 function update(frameCount) {
     if(health > 0){
@@ -139,7 +141,7 @@ function update(frameCount) {
         groupText.position.set(cx-moddedGameSpeed,cy);
     }else{
         audioElementMusic.pause();
-        two.pause();
+        clearInterval(gameIntervalId);
         document.getElementById("highScoreSubmit").style.display = 'block';
     }
 }
@@ -175,7 +177,10 @@ function startGame(){
     startScreenPopup.style.display = 'none';
     audioElementMusic.play();
     startTime = new Date().getTime();
-    two.play();
+    gameIntervalId = setInterval(function() {
+      two.update();
+    }, FRAMERATE);
+
 }
 
 function phoneHome(){

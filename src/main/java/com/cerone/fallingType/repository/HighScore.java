@@ -4,6 +4,8 @@ package com.cerone.fallingType.repository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
 
@@ -11,9 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "high_scores")
 public class HighScore {
 
-    @Id
-    @Column(name="id")
-    private int id;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
 
     @Getter
     @Setter
