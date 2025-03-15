@@ -14,11 +14,7 @@ public class GameController {
             session.setAttribute("cheater",false);
         }else{
             Integer currentScore = (Integer)session.getAttribute("score");
-            if(Math.abs(score - currentScore) > 13){
-                session.setAttribute("cheater",true);
-            }else{
-                session.setAttribute("score",score);
-            }
+            session.setAttribute("score",score);
         }
         return ResponseEntity.ok().build();
     }
