@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 public class HighScore {
 
     @Id
-    @Column(name="id")
-    private int id;
-
     @Getter
     @Setter
     @Column(name="username")
